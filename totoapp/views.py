@@ -34,7 +34,10 @@ class TodoView(FormView):
     
     def post(self, request, *args, **kwargs):
         if "taskDelete" in request.POST and "checkedbox" in request.POST:
+            
             checkedlist = request.POST["checkedbox"]
+            if isinstance(checkedlist, str):
+                checkedlist = [checkedlist]
             for todo_id in checkedlist:
                 todo = Item.objects.get(id=int(todo_id))
                 todo.is_deleted = True
