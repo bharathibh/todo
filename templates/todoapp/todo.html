@@ -1,0 +1,62 @@
+{% extends 'todoapp/base.html' %}
+{% block content %}
+    {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form action="/" method="post">
+            {% csrf_token %} <!-- csrf token for basic security -->
+
+                <div class="inputContainer">
+                    {{form.title}}
+                    <label for="title">Title</label>
+                </div>
+
+                <div class="inputContainer">
+                    {{form.description}}
+                    <label for="description">Description</label>
+                </div>
+
+                <div class="inputContainer">
+                    {{form.status}}
+                    <label for="status">Status</label>
+                </div>
+                
+                <div class="inputContainer half last right">
+                    <input type="date" id="expireDate" class="taskDate" name="expired_at" required>
+                    <label for="expireDate">Expire Date</label>
+                </div>
+                <div class="row">
+                    <button class="btn taskAdd" name="taskAdd" type="submit"><i class="fa fa-plus icon"></i>Add task</button>
+                    <button class="btn taskDelete" name="taskDelete" formnovalidate="" type="submit" onclick="$('input#sublist').click();"><i class="fa fa-trash-o icon"></i>Delete Tasks</button>
+                </div>
+            <ul class="taskList">
+            {% for todo in todos %} <!-- django template lang - for loop -->
+                <li class="taskItem">
+                    <input type="checkbox" class="taskCheckbox" name="checkedbox" id="{{ todo.id }}" value="{{ todo.id }}">
+                    <label for="{{ todo.id }}">
+                        <a href="{% url "todo_view" todo.pk %}">
+                            <span class="complete-">{{ todo.title }}</span>
+                        </a>
+                    
+                    </label>
+                    <label for="{{ todo.id }}"><span class="complete-">{{ todo.get_status_display }}</span></label>
+                    
+
+                    <p><a href="{% url "todo_view" todo.pk %}">View</a> <a href="{% url "todo_edit" todo.pk %}">Edit</a></p>
+
+                </li>
+            {% endfor %}
+            </ul><!-- taskList -->
+            </form>
+{% endblock content %}
